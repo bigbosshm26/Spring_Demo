@@ -9,7 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,25 +20,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DemoController {
 
-    @Autowired
-    private UserAccountService userAccountService;
+    private static final Logger LOGGER = LogManager.getLogger(DemoController.class);
+
+    private final UserAccountService userAccountService;
+
+    public DemoController(
+        UserAccountService userAccountService) {
+        this.userAccountService = userAccountService;
+    }
 
     @GetMapping("/get-all-user-jpa")
     public List<UserDTO> getAllUserByJpa(){
         return userAccountService.findAllUserDTO();
     }
 
-//    @GetMapping("/get-all-user-dto-hibernate")
-//    public List<UserDTO> getAllUserByHibernate(){
-//        return userAccountService.findAllUserByHibernate();
-//    }
+    @GetMapping("/get-all-user-dto-hibernate")
+    public List<UserDTO> getAllUserByHibernate(){
+        return userAccountService.findAllUserByHibernate();
+    }
     @GetMapping("/get-all-user-account")
     public List<UserAccount> getAllUserAccount(){
         return userAccountService.findAllUserAccount();
     }
 
     @PostMapping("/register-user")
-    public String registerUser(@RequestBody @Valid RegisterForm form, BindingResult bindingResult) throws Exception {
+    public String registerUser(@RequestBody @Valid RegisterForm form, BindingResult bindingResult) throws ValidationException {
         if(!form.getPassword().equals(form.getPasswordConfirm())){
             return "Password confirm ko trung password!";
         }
@@ -50,12 +57,12 @@ public class DemoController {
 
     @PostMapping("/test-Json")
     public String testJson(@RequestBody UserDTO userDTO) throws JsonProcessingException {
-        System.out.println("-- before serialization --");
-        System.out.println(userDTO);
+        LOGGER.info("-- before serialization --");
+        LOGGER.info(userDTO);
         ObjectMapper om = new ObjectMapper();
         String jsonString = om.writeValueAsString(userDTO);
-        System.out.println("-- after serialization --");
-        System.out.println(jsonString);
+        LOGGER.info("-- after serialization --");
+        LOGGER.info(jsonString);
         return jsonString;
     }
 }

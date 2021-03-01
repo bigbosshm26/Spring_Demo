@@ -44,7 +44,7 @@ public class UserDTO {
         return "{accountName:" + accountName + ","+"email:" + email +"}";
     }
 
-    public UserDTO(){};
+    public UserDTO(){}
 
     public UserDTO(String accountName, String email) {
         this.accountName = accountName;
