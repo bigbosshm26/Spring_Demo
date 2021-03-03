@@ -1,8 +1,10 @@
 package com.example.demo.config;
 
 import java.util.Locale;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -24,6 +26,15 @@ public class MvcConfig implements WebMvcConfigurer {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
         lci.setParamName("lang");
         return lci;
+    }
+
+    @Bean(name="messageSource")
+    public MessageSource getMessageSource(){
+        ReloadableResourceBundleMessageSource messageBundle=new ReloadableResourceBundleMessageSource();
+
+        messageBundle.setBasename("classpath:messages/messages");
+        messageBundle.setDefaultEncoding("UTF-8");
+        return messageBundle;
     }
 
     @Override
